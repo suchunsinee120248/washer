@@ -1,0 +1,694 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
+    />
+    <title>บันทึกการทำงานเครื่องล้างขวด</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <nav class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab('form', this)">
+        📋 กรอกข้อมูล
+      </button>
+      <button class="tab-btn" onclick="switchTab('log', this)">
+        📜 ประวัติวันนี้
+      </button>
+    </nav>
+
+    <!-- ========================== FORM TAB ========================== -->
+    <div id="tab-form" class="page active">
+      <div class="wrap">
+        <!-- HEADER -->
+        <div class="header-doc">
+          <div class="doc-title">
+            <h2>บริษัท ธนภักดี จำกัด</h2>
+            <p>บันทึกการทำงานของเครื่องล้างขวด (Washer / Rinser)</p>
+          </div>
+
+          <div class="info-grid">
+            <div class="info-item">
+              <label>สายบรรจุที่</label>
+              <select id="hd-line">
+                <option value="1">สาย 1</option>
+                <option value="2">สาย 2</option>
+                <option value="3">สาย 3</option>
+              </select>
+            </div>
+            <div class="info-item">
+              <label>วันที่</label>
+              <input type="date" id="hd-date" />
+            </div>
+
+            <div class="info-item full">
+              <label>ชนิดสุรา</label>
+              <select id="hd-liquor">
+                <option value="">-- เลือกชนิดสุรา --</option>
+                <option>รวงข้าว</option>
+                <option>นิยมไทย</option>
+                <option>แม่วังวารี</option>
+                <option>เชี่ยงชุน</option>
+              </select>
+            </div>
+
+            <div class="info-item full">
+              <label
+                >ขนาดบรรจุ (มล.) <span style="color: #dc2626">*</span></label
+              >
+              <div class="chip-row" id="grp-size">
+                <div class="chip" onclick="selectChip('grp-size', this, '330')">
+                  330 มล.
+                </div>
+                <div class="chip" onclick="selectChip('grp-size', this, '500')">
+                  500 มล.
+                </div>
+                <div class="chip" onclick="selectChip('grp-size', this, '625')">
+                  625 มล.
+                </div>
+              </div>
+            </div>
+
+            <div class="info-item full">
+              <label>ประเภทขวด <span style="color: #dc2626">*</span></label>
+              <div class="chip-row" id="grp-cond">
+                <div
+                  class="chip"
+                  onclick="selectChip('grp-cond', this, 'ขวดใหม่')"
+                >
+                  🟢 ขวดใหม่
+                </div>
+                <div
+                  class="chip"
+                  onclick="selectChip('grp-cond', this, 'ขวดเก่า')"
+                >
+                  🟡 ขวดเก่า
+                </div>
+              </div>
+            </div>
+
+            <div class="info-item">
+              <label>เวลาเริ่มเดินเครื่อง</label>
+              <select
+                id="hd-start"
+                style="
+                  font-family: &quot;IBM Plex Mono&quot;, monospace;
+                  font-size: 16px;
+                  font-weight: 700;
+                "
+              >
+                <option value="">-- เลือก --</option>
+                <option value="06:00">06:00</option>
+                <option value="07:00">07:00</option>
+                <option value="08:00" selected>08:00</option>
+                <option value="09:00">09:00</option>
+                <option value="10:00">10:00</option>
+                <option value="11:00">11:00</option>
+                <option value="12:00">12:00</option>
+                <option value="13:00">13:00</option>
+                <option value="14:00">14:00</option>
+                <option value="15:00">15:00</option>
+                <option value="16:00">16:00</option>
+                <option value="17:00">17:00</option>
+                <option value="18:00">18:00</option>
+                <option value="19:00">19:00</option>
+                <option value="20:00">20:00</option>
+                <option value="21:00">21:00</option>
+                <option value="22:00">22:00</option>
+                <option value="23:00">23:00</option>
+              </select>
+            </div>
+            <div class="info-item">
+              <label>เวลาหยุดเดินเครื่อง</label>
+              <select
+                id="hd-stop"
+                style="
+                  font-family: &quot;IBM Plex Mono&quot;, monospace;
+                  font-size: 16px;
+                  font-weight: 700;
+                "
+              >
+                <option value="">-- เลือก --</option>
+                <option value="06:00">06:00</option>
+                <option value="07:00">07:00</option>
+                <option value="08:00">08:00</option>
+                <option value="09:00">09:00</option>
+                <option value="10:00">10:00</option>
+                <option value="11:00">11:00</option>
+                <option value="12:00">12:00</option>
+                <option value="13:00">13:00</option>
+                <option value="14:00">14:00</option>
+                <option value="15:00">15:00</option>
+                <option value="16:00">16:00</option>
+                <option value="17:00">17:00</option>
+                <option value="18:00">18:00</option>
+                <option value="19:00">19:00</option>
+                <option value="20:00">20:00</option>
+                <option value="21:00">21:00</option>
+                <option value="22:00">22:00</option>
+                <option value="23:00">23:00</option>
+                <option value="24:00" selected>24:00</option>
+              </select>
+            </div>
+
+            <div class="info-item full">
+              <label>จำนวนกะ / วัน</label>
+              <div class="chip-row" id="grp-ka">
+                <div class="chip" onclick="selectChip('grp-ka', this, '1')">
+                  1 กะ
+                </div>
+                <div class="chip on" onclick="selectChip('grp-ka', this, '2')">
+                  2 กะ
+                </div>
+                <div class="chip" onclick="selectChip('grp-ka', this, '3')">
+                  3 กะ
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- /header-doc -->
+
+        <!-- PREVIOUS HOUR -->
+        <div class="card">
+          <div class="card-head">👁️ ข้อมูลชั่วโมงก่อนหน้า</div>
+          <div class="card-body">
+            <div id="prev-block">
+              <div class="no-prev">ยังไม่มีข้อมูลก่อนหน้า</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CURRENT HOUR -->
+        <div class="current-form">
+          <div class="cur-label">
+            ⏱️ กรอกข้อมูลชั่วโมงนี้ &nbsp;
+            <span
+              id="cur-time-badge"
+              style="
+                font-size: 14px;
+                color: var(--amber);
+                font-family: &quot;IBM Plex Mono&quot;, monospace;
+                font-weight: 700;
+              "
+            ></span>
+          </div>
+
+          <!-- เวลา + ผลผลิต -->
+          <div class="f-row">
+            <div class="f-field">
+              <label>⏰ เวลา</label>
+              <select
+                id="f-time"
+                style="
+                  font-family: &quot;IBM Plex Mono&quot;, monospace;
+                  font-size: 18px;
+                  font-weight: 700;
+                  text-align: center;
+                "
+              >
+                <option value="">-- เลือก --</option>
+                <option value="06:00">06:00</option>
+                <option value="07:00">07:00</option>
+                <option value="08:00">08:00</option>
+                <option value="09:00">09:00</option>
+                <option value="10:00">10:00</option>
+                <option value="11:00">11:00</option>
+                <option value="12:00">12:00</option>
+                <option value="13:00">13:00</option>
+                <option value="14:00">14:00</option>
+                <option value="15:00">15:00</option>
+                <option value="16:00">16:00</option>
+                <option value="17:00">17:00</option>
+                <option value="18:00">18:00</option>
+                <option value="19:00">19:00</option>
+                <option value="20:00">20:00</option>
+                <option value="21:00">21:00</option>
+                <option value="22:00">22:00</option>
+                <option value="23:00">23:00</option>
+                <option value="24:00">24:00</option>
+              </select>
+            </div>
+            <div class="f-field">
+              <label>🍾 ความเร็วรอบ (ขวด/ชม.)</label>
+              <input
+                type="number"
+                id="f-bph"
+                placeholder="0"
+                min="0"
+                step="100"
+              />
+            </div>
+          </div>
+
+          <!-- ======================== CAUSTIC BATH 1 ======================== -->
+          <div class="section-divider">🧪 อุณหภูมิ &amp; แรงดัน</div>
+
+          <div class="bath-card">
+            <div class="bath-title">
+              โซดาไฟถัง 1 (Caustic Bath 1)
+              <span class="tag-teal">CCP2</span>
+            </div>
+            <div class="bath-fields">
+              <div class="m-field">
+                <label>อุณหภูมิ Temp (°C)</label>
+                <input
+                  type="number"
+                  id="b-c1-temp"
+                  placeholder="—"
+                  min="0"
+                  max="100"
+                  step="0.1"
+                  oninput="syncCCP()"
+                />
+              </div>
+              <div class="m-field">
+                <label>แรงดัน Pressure (bar)</label>
+                <input
+                  type="number"
+                  id="b-c1-pres"
+                  placeholder="2.2"
+                  value="2.2"
+                  min="0"
+                  max="10"
+                  step="0.1"
+                  oninput="syncCCP()"
+                />
+              </div>
+              <div class="m-field">
+                <label>โซดาไฟ NaOH (%)</label>
+                <input
+                  type="number"
+                  id="b-c1-naoh"
+                  placeholder="—"
+                  min="0"
+                  max="10"
+                  step="0.01"
+                  oninput="syncCCP()"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- ======================== CAUSTIC BATH 2 ======================== -->
+          <div class="bath-card">
+            <div class="bath-title">โซดาไฟถัง 2 (Caustic Bath 2)</div>
+            <div class="bath-fields-2">
+              <div class="m-field">
+                <label>อุณหภูมิ Temp (°C)</label>
+                <input
+                  type="number"
+                  id="b-c2-temp"
+                  placeholder="—"
+                  min="0"
+                  max="100"
+                  step="0.1"
+                />
+              </div>
+              <div class="m-field">
+                <label>แรงดัน Pressure (bar)</label>
+                <input
+                  type="number"
+                  id="b-c2-pres"
+                  placeholder="1.2"
+                  value="1.2"
+                  min="0"
+                  max="10"
+                  step="0.1"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="bath-card">
+            <div class="bath-title">♨️ น้ำอุ่น (Warm Water 1 &amp; 2)</div>
+            <div
+              style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px"
+            >
+              <div>
+                <div
+                  style="
+                    font-size: 10px;
+                    color: var(--muted);
+                    font-weight: 700;
+                    margin-bottom: 6px;
+                    text-align: center;
+                  "
+                >
+                  — WARM 1 —
+                </div>
+                <div class="bath-fields-2">
+                  <div class="m-field">
+                    <label>อุณหภูมิ Temp (°C)</label
+                    ><input
+                      type="number"
+                      id="b-w1-temp"
+                      placeholder="—"
+                      min="0"
+                      max="100"
+                      step="0.1"
+                    />
+                  </div>
+                  <div class="m-field">
+                    <label>แรงดัน Pressure (bar)</label
+                    ><input
+                      type="number"
+                      id="b-w1-pres"
+                      placeholder="0.5"
+                      value="0.5"
+                      min="0"
+                      max="10"
+                      step="0.1"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div
+                  style="
+                    font-size: 10px;
+                    color: var(--muted);
+                    font-weight: 700;
+                    margin-bottom: 6px;
+                    text-align: center;
+                  "
+                >
+                  — WARM 2 —
+                </div>
+                <div class="bath-fields-2">
+                  <div class="m-field">
+                    <label>อุณหภูมิ Temp (°C)</label
+                    ><input
+                      type="number"
+                      id="b-w2-temp"
+                      placeholder="—"
+                      min="0"
+                      max="100"
+                      step="0.1"
+                    />
+                  </div>
+                  <div class="m-field">
+                    <label>แรงดัน Pressure (bar)</label
+                    ><input
+                      type="number"
+                      id="b-w2-pres"
+                      placeholder="0.5"
+                      value="0.5"
+                      min="0"
+                      max="10"
+                      step="0.1"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="bath-card">
+            <div class="bath-title">น้ำเย็นและน้ำอ่อน (COLD & FRESH WATER)</div>
+            <div
+              style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px"
+            >
+              <div>
+                <div
+                  style="
+                    font-size: 10px;
+                    color: var(--muted);
+                    font-weight: 700;
+                    margin-bottom: 6px;
+                    text-align: center;
+                  "
+                >
+                  — Cold Water —
+                </div>
+                <div class="bath-fields-2">
+                  <div class="m-field">
+                    <label>อุณหภูมิ Temp (°C)</label
+                    ><input
+                      type="number"
+                      id="b-cold-temp"
+                      placeholder="—"
+                      min="0"
+                      max="100"
+                      step="0.1"
+                    />
+                  </div>
+                  <div class="m-field">
+                    <label>แรงดัน Pressure (bar)</label
+                    ><input
+                      type="number"
+                      id="b-cold-pres"
+                      placeholder="1.5"
+                      value="1.5"
+                      min="0"
+                      max="10"
+                      step="0.1"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div
+                  style="
+                    font-size: 10px;
+                    color: var(--muted);
+                    font-weight: 700;
+                    margin-bottom: 6px;
+                    text-align: center;
+                  "
+                >
+                  — Fresh Water —
+                </div>
+                <div class="bath-fields-2">
+                  <div class="m-field">
+                    <label>อุณหภูมิ Temp (°C)</label
+                    ><input
+                      type="number"
+                      id="b-fresh-temp"
+                      placeholder="—"
+                      min="0"
+                      max="100"
+                      step="0.1"
+                    />
+                  </div>
+                  <div class="m-field">
+                    <label>แรงดัน Pressure (bar)</label
+                    ><input
+                      type="number"
+                      id="b-fresh-pres"
+                      placeholder="1.5"
+                      value="1.5"
+                      min="0"
+                      max="10"
+                      step="0.1"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ======================== pH ======================== -->
+          <div style="margin-top: 14px">
+            <div class="f-field">
+              <label
+                >🔬 pH น้ำค้างขวด
+                <span style="color: var(--teal); font-size: 10px"
+                  >(เกณฑ์ 6.5–8.5)</span
+                ></label
+              >
+              <input
+                type="number"
+                id="f-ph"
+                placeholder="7.1"
+                min="0"
+                max="14"
+                step="0.1"
+                oninput="syncCCP()"
+              />
+            </div>
+          </div>
+
+          <!-- หมายเหตุ -->
+          <div class="section-divider" style="margin-top: 10px">
+            📝 หมายเหตุ
+          </div>
+          <div class="f-field" style="margin-bottom: 14px">
+            <textarea
+              id="f-remark"
+              placeholder="หมายเหตุเพิ่มเติม..."
+              style="height: 52px"
+            ></textarea>
+          </div>
+
+          <button class="save-btn" onclick="saveEntry()">
+            ✅ บันทึกข้อมูลชั่วโมงนี้
+          </button>
+        </div>
+        <!-- /current-form -->
+
+        <!-- SIGNATURE -->
+        <div class="card">
+          <div class="card-head">✍️ ลงชื่อ</div>
+          <div class="card-body">
+            <div class="f-row">
+              <div class="f-field">
+                <label>พนักงานผู้ทำงาน</label>
+                <input type="text" id="sig-operator" placeholder="ชื่อ-สกุล" />
+              </div>
+              <div class="f-field">
+                <label>ผู้ตรวจสอบ</label>
+                <input type="text" id="sig-checker" placeholder="ชื่อ-สกุล" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- GOOGLE SHEETS -->
+        <div class="card">
+          <div
+            class="card-head coll-head"
+            onclick="toggleColl(this)"
+            style="cursor: pointer"
+          >
+            ⚙️ ตั้งค่า Google Sheets
+            <span
+              id="sheets-badge"
+              style="
+                font-size: 11px;
+                padding: 3px 10px;
+                border-radius: 20px;
+                background: rgba(255, 200, 0, 0.3);
+                margin-left: auto;
+              "
+              >⚠️ ยังไม่ได้ตั้งค่า</span
+            >
+            <span class="coll-arrow">▼</span>
+          </div>
+          <div class="card-body coll-body">
+            <p
+              style="
+                font-size: 12px;
+                color: var(--muted);
+                margin-bottom: 10px;
+                line-height: 1.7;
+              "
+            >
+              วาง URL ของ Google Apps Script ที่ Deploy แล้ว<br /><span
+                style="color: var(--accent); font-weight: 600"
+                >ตั้งค่าครั้งเดียว — บันทึกถาวร</span
+              >
+            </p>
+            <div class="f-field" style="margin-bottom: 10px">
+              <label>Apps Script URL</label>
+              <input
+                type="url"
+                id="sheet-url-input"
+                style="font-size: 12px"
+                placeholder="https://script.google.com/..."
+              />
+            </div>
+            <div style="display: flex; gap: 8px">
+              <button
+                onclick="saveSheetUrl()"
+                style="
+                  flex: 1;
+                  padding: 10px;
+                  background: var(--accent);
+                  color: #fff;
+                  border: none;
+                  border-radius: 8px;
+                  font-family: &quot;Sarabun&quot;, sans-serif;
+                  font-size: 14px;
+                  font-weight: 700;
+                  cursor: pointer;
+                "
+              >
+                💾 บันทึก URL
+              </button>
+              <button
+                onclick="clearSheetUrl()"
+                style="
+                  padding: 10px 16px;
+                  background: #fee2e2;
+                  color: var(--red);
+                  border: none;
+                  border-radius: 8px;
+                  font-family: &quot;Sarabun&quot;, sans-serif;
+                  font-size: 13px;
+                  font-weight: 600;
+                  cursor: pointer;
+                "
+              >
+                ลบ
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- /wrap -->
+    </div>
+    <!-- /tab-form -->
+
+    <!-- ========================== LOG TAB ========================== -->
+    <div id="tab-log" class="page">
+      <div class="wrap">
+        <div class="card">
+          <div class="card-head">📜 บันทึกรายชั่วโมง — วันนี้</div>
+          <div class="log-scroll">
+            <table class="log-tbl">
+              <thead>
+                <tr>
+                  <th>เวลา</th>
+                  <th>ขวด/ชม.</th>
+                  <th>C1 Temp<br />°C</th>
+                  <th>C1 Press<br />bar</th>
+                  <th>C1 NaOH<br />%</th>
+                  <th>C2 Temp<br />°C</th>
+                  <th>C2 Press<br />bar</th>
+                  <th>W1 Temp<br />°C</th>
+                  <th>W1 Press<br />bar</th>
+                  <th>W2 Temp<br />°C</th>
+                  <th>W2 Press<br />bar</th>
+                  <th>Cold Temp<br />°C</th>
+                  <th>Cold Press<br />bar</th>
+                  <th>Fresh Temp<br />°C</th>
+                  <th>Fresh Press<br />bar</th>
+                  <th>pH</th>
+                  <th>CCP แรงดัน</th>
+                  <th>CCP NaOH%</th>
+                  <th>CCP อุณหภูมิ</th>
+                  <th>Downtime</th>
+                  <th>หมายเหตุ</th>
+                </tr>
+              </thead>
+              <tbody id="log-tbody">
+                <tr>
+                  <td
+                    colspan="21"
+                    style="
+                      color: var(--muted);
+                      padding: 20px;
+                      font-style: italic;
+                    "
+                  >
+                    ยังไม่มีข้อมูล — กรอกข้อมูลแล้วจะแสดงที่นี่
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
