@@ -286,11 +286,11 @@ function saveEntry() {
     fwTemp: getVal("b-fresh-temp"),
     fwPres: getVal("b-fresh-pres"),
     // pH
-    ph: getVal("f-ph"),
+    ph: getVal("f-ph") || "7.1",
     // CCP2
     ccpPres: getVal("ccp-pres"),
     ccpNaoh: chipState["grp-naoh-meas"] === "yes" ? getVal("ccp-naoh") : "",
-    ccpPh: getVal("ccp-ph"),
+    ccpPh: getVal("ccp-ph") || "7.1",
     ccpTemp: getVal("ccp-temp"),
     ccpNC: getVal("f-ccp-nc").trim(),
     // Downtime
