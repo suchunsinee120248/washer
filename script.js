@@ -173,11 +173,11 @@ function hideBadge(id) {
 // ============================================================
 //  WATER METER CALC
 // ============================================================
-function calcWater() {
-  const b = parseFloat(document.getElementById("d-meter-before").value) || 0;
-  const a = parseFloat(document.getElementById("d-meter-after").value) || 0;
-  document.getElementById("d-meter-used").value = Math.max(0, a - b).toFixed(1);
-}
+// function calcWater() {
+//   const b = parseFloat(document.getElementById("d-meter-before").value) || 0;
+//   const a = parseFloat(document.getElementById("d-meter-after").value) || 0;
+//   document.getElementById("d-meter-used").value = Math.max(0, a - b).toFixed(1);
+// }
 
 // ============================================================
 //  PREVIOUS HOUR DISPLAY
@@ -297,7 +297,7 @@ function saveEntry() {
     // มิเตอร์น้ำ
     meterBefore: getVal("d-meter-before"),
     meterAfter: getVal("d-meter-after"),
-    meterUsed: getVal("d-meter-used"),
+    // meterUsed: getVal("d-meter-used"),
     // CCP2
     ccpPres: getVal("b-c1-pres"),
     ccpNaoh: (() => {
@@ -337,7 +337,7 @@ function saveEntry() {
     "f-ph",
     "d-meter-before",
     "d-meter-after",
-    "d-meter-used",
+    // "d-meter-used",
     "f-ccp-nc",
     "f-remark",
   ];
@@ -428,11 +428,13 @@ function renderLog(data) {
               <td class="mono">${e.fwTemp || "—"}</td>
               <td class="mono">${e.fwPres || "—"}</td>
               <td class="mono">${e.ph || "—"}</td>
-              <td class="mono">${e.ccpPres || "—"}</td>
-              <td class="mono">${e.ccpNaoh || "—"}</td>
-              <td class="mono">${e.ccpTemp || "—"}</td>
+              <td class="mono">${e.ccpResult || "—"}</td>
+              <td class="mono">${e.meterBefore || "—"}</td>
+              <td class="mono">${e.meterAfter || "—"}</td>
               <td>${dt}</td>
               <td style="text-align:left;font-size:11px;max-width:100px;">${e.remark || "—"}</td>
+              <td class="mono">${e.operator || "—"}</td>
+              <td class="mono">${e.checker || "—"}</td>
             </tr>`;
   });
 }
