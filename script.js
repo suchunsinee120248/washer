@@ -87,15 +87,14 @@ function toggleColl(head) {
 }
 
 // ============================================================
-//  AUTO-SYNC CCP2 FROM BATH 1 (อ่านจาก Bath1 fields โดยตรง)
+//  AUTO-SYNC CCP2 FROM BATH 1
 // ============================================================
 function syncCCP() {
   checkCCP();
 }
 
 // ============================================================
-//  CCP CHECK (real-time) — อ่านจาก Bath1 fields โดยตรง
-//  NaOH% ตรวจเฉพาะชั่วโมงเลขคู่ (06,08,10,12,14,16,18,20,22,24)
+//  CCP CHECK (real-time)
 // ============================================================
 function checkCCP() {
   const p = parseFloat(document.getElementById("b-c1-pres").value);
@@ -103,16 +102,12 @@ function checkCCP() {
   const t = parseFloat(document.getElementById("b-c1-temp").value);
   const ph = parseFloat(document.getElementById("f-ph").value);
   const isOld = chipState["grp-cond"] === "ขวดเก่า";
-
-  // ตรวจสอบว่าชั่วโมงปัจจุบันเป็นเลขคู่หรือไม่
   const timeVal = document.getElementById("f-time").value;
   const hour = timeVal ? parseInt(timeVal.split(":")[0], 10) : -1;
   const isEvenHour = hour >= 0 && hour % 2 === 0;
+  let anyFail = false,
+    anyValue = false;
 
-  let anyFail = false;
-  let anyValue = false;
-
-  // แรงดัน Caustic Bath 1 ≥ 1.0 bar
   if (!isNaN(p)) {
     anyValue = true;
     const ok = p >= 1.0;
@@ -120,7 +115,6 @@ function checkCCP() {
     if (!ok) anyFail = true;
   } else hideBadge("badge-pres");
 
-  // NaOH% — ตรวจเฉพาะชม.เลขคู่
   const naohNoCheck = document.getElementById("naoh-no-check");
   if (isEvenHour) {
     if (naohNoCheck) naohNoCheck.style.display = "none";
@@ -131,7 +125,6 @@ function checkCCP() {
       if (!ok) anyFail = true;
     } else hideBadge("badge-naoh");
   } else {
-    // ชม.คี่ — ไม่ตรวจ NaOH%
     hideBadge("badge-naoh");
     if (naohNoCheck && timeVal) {
       naohNoCheck.style.display = "inline-block";
@@ -139,7 +132,6 @@ function checkCCP() {
     }
   }
 
-  // อุณหภูมิ Caustic Bath 1 (ขวดเก่า ≥ 80°C)
   if (!isNaN(t)) {
     anyValue = true;
     const ok = isOld ? t >= 80 : true;
@@ -147,7 +139,6 @@ function checkCCP() {
     if (!ok) anyFail = true;
   } else hideBadge("badge-temp");
 
-  // pH น้ำค้างขวด 6.5–8.5
   if (!isNaN(ph)) {
     anyValue = true;
     const ok = ph >= 6.5 && ph <= 8.5;
@@ -157,8 +148,6 @@ function checkCCP() {
 
   const ncWrap = document.getElementById("nc-wrap");
   if (ncWrap) ncWrap.style.display = anyFail ? "block" : "none";
-
-  // แสดง/ซ่อน summary card
   const summary = document.getElementById("ccp-summary");
   if (summary) summary.style.display = anyValue ? "block" : "none";
 }
@@ -305,7 +294,11 @@ function saveEntry() {
     fwPres: getVal("b-fresh-pres"),
     // pH
     ph: getVal("f-ph") || "7.1",
-    // CCP2 — อ่านจาก Bath1 fields โดยตรง
+    // มิเตอร์น้ำ
+    meterBefore: getVal("d-meter-before"),
+    meterAfter: getVal("d-meter-after"),
+    meterUsed: getVal("d-meter-used"),
+    // CCP2
     ccpPres: getVal("b-c1-pres"),
     ccpNaoh: (() => {
       const h = parseInt((time || "").split(":")[0], 10);
@@ -342,6 +335,9 @@ function saveEntry() {
     "b-cold-temp",
     "b-fresh-temp",
     "f-ph",
+    "d-meter-before",
+    "d-meter-after",
+    "d-meter-used",
     "f-ccp-nc",
     "f-remark",
   ];
@@ -365,14 +361,13 @@ function saveEntry() {
   if (document.getElementById("b-fresh-pres"))
     document.getElementById("b-fresh-pres").value = "1.5";
 
-  // Reset CCP badges and summary
   ["badge-pres", "badge-naoh", "badge-ph", "badge-temp"].forEach(hideBadge);
-  const naohNoCheck = document.getElementById("naoh-no-check");
-  if (naohNoCheck) naohNoCheck.style.display = "none";
-  const ncWrap = document.getElementById("nc-wrap");
-  if (ncWrap) ncWrap.style.display = "none";
-  const ccpSummary = document.getElementById("ccp-summary");
-  if (ccpSummary) ccpSummary.style.display = "none";
+  const nnc = document.getElementById("naoh-no-check");
+  if (nnc) nnc.style.display = "none";
+  const ncw = document.getElementById("nc-wrap");
+  if (ncw) ncw.style.display = "none";
+  const cs = document.getElementById("ccp-summary");
+  if (cs) cs.style.display = "none";
 
   // Advance time +1h
   const [hh] = entry.time.split(":").map(Number);
