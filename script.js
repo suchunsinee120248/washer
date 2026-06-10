@@ -87,62 +87,80 @@ function toggleColl(head) {
 }
 
 // ============================================================
-//  AUTO-SYNC CCP2 FROM BATH 1
+//  AUTO-SYNC CCP2 FROM BATH 1 (อ่านจาก Bath1 fields โดยตรง)
 // ============================================================
 function syncCCP() {
-  const c1p = document.getElementById("b-c1-pres").value;
-  const c1n = document.getElementById("b-c1-naoh").value;
-  const c1t = document.getElementById("b-c1-temp").value;
-  const ph = document.getElementById("f-ph").value;
-  // Only auto-fill if empty
-  if (c1p && !document.getElementById("ccp-pres").value)
-    document.getElementById("ccp-pres").value = c1p;
-  if (c1n && !document.getElementById("ccp-naoh").value)
-    document.getElementById("ccp-naoh").value = c1n;
-  if (c1t && !document.getElementById("ccp-temp").value)
-    document.getElementById("ccp-temp").value = c1t;
-  if (ph && !document.getElementById("ccp-ph").value)
-    document.getElementById("ccp-ph").value = ph;
   checkCCP();
 }
 
 // ============================================================
-//  CCP CHECK (real-time)
+//  CCP CHECK (real-time) — อ่านจาก Bath1 fields โดยตรง
+//  NaOH% ตรวจเฉพาะชั่วโมงเลขคู่ (06,08,10,12,14,16,18,20,22,24)
 // ============================================================
 function checkCCP() {
-  const p = parseFloat(document.getElementById("ccp-pres").value);
-  const n = parseFloat(document.getElementById("ccp-naoh").value);
-  const ph = parseFloat(document.getElementById("ccp-ph").value);
-  const t = parseFloat(document.getElementById("ccp-temp").value);
+  const p = parseFloat(document.getElementById("b-c1-pres").value);
+  const n = parseFloat(document.getElementById("b-c1-naoh").value);
+  const t = parseFloat(document.getElementById("b-c1-temp").value);
+  const ph = parseFloat(document.getElementById("f-ph").value);
   const isOld = chipState["grp-cond"] === "ขวดเก่า";
-  const measN = chipState["grp-naoh-meas"] === "yes";
-  let anyFail = false;
 
+  // ตรวจสอบว่าชั่วโมงปัจจุบันเป็นเลขคู่หรือไม่
+  const timeVal = document.getElementById("f-time").value;
+  const hour = timeVal ? parseInt(timeVal.split(":")[0], 10) : -1;
+  const isEvenHour = hour >= 0 && hour % 2 === 0;
+
+  let anyFail = false;
+  let anyValue = false;
+
+  // แรงดัน Caustic Bath 1 ≥ 1.0 bar
   if (!isNaN(p)) {
+    anyValue = true;
     const ok = p >= 1.0;
     setBadge("badge-pres", ok);
     if (!ok) anyFail = true;
   } else hideBadge("badge-pres");
 
-  if (!isNaN(n) && measN) {
-    const ok = isOld ? n >= 1.8 && n <= 3.0 : n >= 0.2 && n <= 0.6;
-    setBadge("badge-naoh", ok);
-    if (!ok) anyFail = true;
-  } else hideBadge("badge-naoh");
+  // NaOH% — ตรวจเฉพาะชม.เลขคู่
+  const naohNoCheck = document.getElementById("naoh-no-check");
+  if (isEvenHour) {
+    if (naohNoCheck) naohNoCheck.style.display = "none";
+    if (!isNaN(n)) {
+      anyValue = true;
+      const ok = isOld ? n >= 1.8 && n <= 3.0 : n >= 0.2 && n <= 0.6;
+      setBadge("badge-naoh", ok);
+      if (!ok) anyFail = true;
+    } else hideBadge("badge-naoh");
+  } else {
+    // ชม.คี่ — ไม่ตรวจ NaOH%
+    hideBadge("badge-naoh");
+    if (naohNoCheck && timeVal) {
+      naohNoCheck.style.display = "inline-block";
+      anyValue = true;
+    }
+  }
 
-  if (!isNaN(ph)) {
-    const ok = ph >= 6.5 && ph <= 8.5;
-    setBadge("badge-ph", ok);
-    if (!ok) anyFail = true;
-  } else hideBadge("badge-ph");
-
+  // อุณหภูมิ Caustic Bath 1 (ขวดเก่า ≥ 80°C)
   if (!isNaN(t)) {
+    anyValue = true;
     const ok = isOld ? t >= 80 : true;
     setBadge("badge-temp", ok);
     if (!ok) anyFail = true;
   } else hideBadge("badge-temp");
 
-  document.getElementById("nc-wrap").style.display = anyFail ? "block" : "none";
+  // pH น้ำค้างขวด 6.5–8.5
+  if (!isNaN(ph)) {
+    anyValue = true;
+    const ok = ph >= 6.5 && ph <= 8.5;
+    setBadge("badge-ph", ok);
+    if (!ok) anyFail = true;
+  } else hideBadge("badge-ph");
+
+  const ncWrap = document.getElementById("nc-wrap");
+  if (ncWrap) ncWrap.style.display = anyFail ? "block" : "none";
+
+  // แสดง/ซ่อน summary card
+  const summary = document.getElementById("ccp-summary");
+  if (summary) summary.style.display = anyValue ? "block" : "none";
 }
 
 function setBadge(id, pass) {
@@ -287,11 +305,14 @@ function saveEntry() {
     fwPres: getVal("b-fresh-pres"),
     // pH
     ph: getVal("f-ph") || "7.1",
-    // CCP2
-    ccpPres: getVal("ccp-pres"),
-    ccpNaoh: chipState["grp-naoh-meas"] === "yes" ? getVal("ccp-naoh") : "",
-    ccpPh: getVal("ccp-ph") || "7.1",
-    ccpTemp: getVal("ccp-temp"),
+    // CCP2 — อ่านจาก Bath1 fields โดยตรง
+    ccpPres: getVal("b-c1-pres"),
+    ccpNaoh: (() => {
+      const h = parseInt((time || "").split(":")[0], 10);
+      return h >= 0 && h % 2 === 0 ? getVal("b-c1-naoh") : "ไม่ตรวจ (ชม.คี่)";
+    })(),
+    ccpPh: getVal("f-ph"),
+    ccpTemp: getVal("b-c1-temp"),
     ccpNC: getVal("f-ccp-nc").trim(),
     // Downtime
     hasDT,
@@ -321,15 +342,8 @@ function saveEntry() {
     "b-cold-temp",
     "b-fresh-temp",
     "f-ph",
-    "ccp-pres",
-    "ccp-naoh",
-    "ccp-ph",
-    "ccp-temp",
     "f-ccp-nc",
     "f-remark",
-    "dt-start",
-    "dt-end",
-    "dt-cause",
   ];
 
   resetIds.forEach((id) => {
@@ -351,29 +365,14 @@ function saveEntry() {
   if (document.getElementById("b-fresh-pres"))
     document.getElementById("b-fresh-pres").value = "1.5";
 
+  // Reset CCP badges and summary
   ["badge-pres", "badge-naoh", "badge-ph", "badge-temp"].forEach(hideBadge);
-  if (document.getElementById("nc-wrap"))
-    document.getElementById("nc-wrap").style.display = "none";
-
-  // Reset DT
-  const dtChip = document.querySelector("#grp-dt .chip");
-  if (dtChip) selectChip("grp-dt", dtChip, "no");
-  const dtSec = document.getElementById("dt-section");
-  if (dtSec) dtSec.classList.remove("show");
-  document
-    .querySelectorAll("#grp-dt-type .dt-chip")
-    .forEach((c) => c.classList.remove("on"));
-  dtType = "";
-
-  // Reset NaOH measurement toggle to 'วัด'
-  const naohChips = document.querySelectorAll("#grp-naoh-meas .chip");
-  if (naohChips.length > 0) {
-    naohChips.forEach((c) => c.classList.remove("on"));
-    naohChips[0].classList.add("on");
-    chipState["grp-naoh-meas"] = "yes";
-  }
-  if (document.getElementById("naoh-input-wrap"))
-    document.getElementById("naoh-input-wrap").style.display = "block";
+  const naohNoCheck = document.getElementById("naoh-no-check");
+  if (naohNoCheck) naohNoCheck.style.display = "none";
+  const ncWrap = document.getElementById("nc-wrap");
+  if (ncWrap) ncWrap.style.display = "none";
+  const ccpSummary = document.getElementById("ccp-summary");
+  if (ccpSummary) ccpSummary.style.display = "none";
 
   // Advance time +1h
   const [hh] = entry.time.split(":").map(Number);
